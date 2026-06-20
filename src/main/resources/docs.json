@@ -1,0 +1,1623 @@
+{
+  "$schema" : "http://json-schema.org/draft-04/schema#",
+  "title" : "Rubp",
+  "type" : "object",
+  "additionalProperties" : false,
+  "properties" : {
+    "offset" : {
+      "type" : "integer",
+      "minimum" : -1,
+      "description" : "Смещение"
+    },
+    "pageNum" : {
+      "type" : "integer",
+      "minimum" : 0,
+      "description" : "Номер страницы"
+    },
+    "pageSize" : {
+      "type" : "integer",
+      "minimum" : 0,
+      "maximum" : 1000,
+      "description" : "Количество записей набора открытых данных выведенных на страницу"
+    },
+    "recordCount" : {
+      "type" : "integer",
+      "minimum" : 0,
+      "description" : "Общее количество записей в наборе открытых данных"
+    },
+    "data" : {
+      "type" : "array",
+      "items" : {
+        "$ref" : "#/definitions/RubpEntry"
+      }
+    },
+    "order" : {
+      "type" : "string",
+      "description" : "Поле сортировки"
+    },
+    "orderDirection" : {
+      "type" : "string",
+      "description" : "Сортировка по возрастанию или по убыванию",
+      "enum" : [ "asc", "desc" ]
+    },
+    "limits" : {
+      "type" : "object",
+      "additionalProperties" : {
+        "$ref" : "#/definitions/BlockLimitations"
+      },
+      "description" : "Ограничения на блоки"
+    },
+    "version" : {
+      "type" : "string",
+      "description" : "Версия набора открытых данных"
+    },
+    "pageCount" : {
+      "type" : "integer",
+      "minimum" : 0,
+      "description" : "Количество страниц"
+    }
+  },
+  "required" : [ "offset", "pageNum", "pageSize", "recordCount", "pageCount" ],
+  "definitions" : {
+    "RubpEntry" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "info" : {
+          "$ref" : "#/definitions/RubpEntryInfo"
+        },
+        "authorities" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/RubpEntryAuthority"
+          }
+        },
+        "activities" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/RubpEntryActivity"
+          }
+        },
+        "heads" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/RubpEntryHead"
+          }
+        },
+        "successions" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/RubpEntrySuccession"
+          }
+        },
+        "facialAccounts" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/RubpEntryAccountFK"
+          }
+        },
+        "foAccounts" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/RubpEntryAccountFO"
+          }
+        },
+        "participantPermissions" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/RubpEntryParticipantPermission"
+          }
+        },
+        "nonParticipantPermissions" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/RubpEntryNonParticipantPermission"
+          }
+        },
+        "procurementPermissions" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/RubpEntryProcurementPermission"
+          }
+        },
+        "contacts" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/RubpEntryContact"
+          }
+        },
+        "acceptAuths" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/RubpEntryAcceptAuth"
+          }
+        },
+        "transfauth" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/RubpEntryTransfAuth"
+          }
+        },
+        "attachment" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/RubpEntryAttachment"
+          }
+        },
+        "contracts" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/RubpEntryContract"
+          }
+        },
+        "ubptransfauthbp" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/RubpEntryUbpTransfAuthbp"
+          }
+        },
+        "ubptransfauthbu" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/RubpEntryUbpTransfAuthbu"
+          }
+        },
+        "ubpfin" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/RubpEntryUbpfin"
+          }
+        },
+        "ksaccounts" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/RubpEntryKsAccount"
+          }
+        }
+      }
+    },
+    "RubpEntryInfo" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "properties" : {
+        "regNum" : {
+          "type" : "string",
+          "minLength" : 5,
+          "maxLength" : 5,
+          "description" : "Учетный номер организации, присваиваемый в ОрФК"
+        },
+        "code" : {
+          "type" : "string",
+          "minLength" : 8,
+          "maxLength" : 8,
+          "description" : "Код организации (обособленного подразделения) по Сводному реестру, присваиваемый в ОрФК"
+        },
+        "divisionParentName" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование организации, создавшей подразделение"
+        },
+        "divisionParentCode" : {
+          "type" : "string",
+          "maxLength" : 8,
+          "description" : "Код организации, создавшей подразделение"
+        },
+        "ogrn" : {
+          "type" : "string",
+          "maxLength" : 13,
+          "description" : "ОГРН организации"
+        },
+        "fullName" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Полное наименование организации"
+        },
+        "shortName" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Сокращенное наименование организации"
+        },
+        "inn" : {
+          "type" : "string",
+          "maxLength" : 10,
+          "description" : "ИНН организации"
+        },
+        "kpp" : {
+          "type" : "string",
+          "maxLength" : 20,
+          "description" : "Указывается КПП по месту регистрации организации. Для обособленных подразделений указывается КПП обособленного подразделения"
+        },
+        "regDate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата постановки на учет в ФНС"
+        },
+        "okopfName" : {
+          "type" : "string",
+          "maxLength" : 250,
+          "description" : "Наименование по ОКОПФ"
+        },
+        "okopfCode" : {
+          "type" : "string",
+          "maxLength" : 5,
+          "description" : "Код по ОКОПФ"
+        },
+        "okfsName" : {
+          "type" : "string",
+          "maxLength" : 250,
+          "description" : "Наименование по ОКФС"
+        },
+        "okfsCode" : {
+          "type" : "string",
+          "minLength" : 2,
+          "maxLength" : 2,
+          "description" : "Код по ОКФС"
+        },
+        "postIndex" : {
+          "type" : "string",
+          "maxLength" : 6,
+          "description" : "Индекс"
+        },
+        "cityType" : {
+          "type" : "string",
+          "maxLength" : 10,
+          "description" : "Тип города"
+        },
+        "cityName" : {
+          "type" : "string",
+          "maxLength" : 1000,
+          "description" : "Наименование города"
+        },
+        "streetType" : {
+          "type" : "string",
+          "maxLength" : 10,
+          "description" : "Тип улицы"
+        },
+        "streetName" : {
+          "type" : "string",
+          "maxLength" : 1000,
+          "description" : "Наименование улицы"
+        },
+        "house" : {
+          "type" : "string",
+          "maxLength" : 50,
+          "description" : "Дом"
+        },
+        "oktmoName" : {
+          "type" : "string",
+          "maxLength" : 500,
+          "description" : "Наименование по ОКТМО"
+        },
+        "oktmoCode" : {
+          "type" : "string",
+          "maxLength" : 11,
+          "description" : "Код по ОКТМО"
+        },
+        "orfkName" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование ОрФК обслуживания"
+        },
+        "orfkCode" : {
+          "type" : "string",
+          "minLength" : 4,
+          "maxLength" : 4,
+          "description" : "Код ОрФК обслуживания"
+        },
+        "oksmName" : {
+          "type" : "string",
+          "maxLength" : 500,
+          "description" : "Наименование страны по ОКСМ"
+        },
+        "oksmCode" : {
+          "type" : "string",
+          "maxLength" : 3,
+          "description" : "Код страны по ОКСМ"
+        },
+        "location" : {
+          "type" : "string",
+          "maxLength" : 1000,
+          "description" : "Адрес в стране местонахождения"
+        },
+        "kbkName" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование главы по БК"
+        },
+        "kbkCode" : {
+          "type" : "string",
+          "maxLength" : 3,
+          "description" : "Код главы по БК"
+        },
+        "okoguName" : {
+          "type" : "string",
+          "maxLength" : 500,
+          "description" : "Наименование по ОКОГУ"
+        },
+        "okoguCode" : {
+          "type" : "string",
+          "maxLength" : 7,
+          "description" : "Код по ОКОГУ"
+        },
+        "okpoCode" : {
+          "type" : "string",
+          "maxLength" : 10,
+          "description" : "Код по ОКПО"
+        },
+        "orgTypeName" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 360,
+          "description" : "Наименование типа организации"
+        },
+        "orgTypeCode" : {
+          "type" : "string",
+          "minLength" : 2,
+          "maxLength" : 2,
+          "description" : "Код типа организации"
+        },
+        "establishmentKindName" : {
+          "type" : "string",
+          "maxLength" : 20,
+          "description" : "Наименование типа учреждения"
+        },
+        "establishmentKindCode" : {
+          "type" : "string",
+          "maxLength" : 1,
+          "description" : "Код типа учреждения"
+        },
+        "legalPersonKindName" : {
+          "type" : "string",
+          "maxLength" : 255,
+          "description" : "Наименование способа образования юридического лица"
+        },
+        "legalPersonKindCode" : {
+          "type" : "string",
+          "maxLength" : 2,
+          "description" : "Код способа образования юридического лица"
+        },
+        "ougvName" : {
+          "type" : "string",
+          "maxLength" : 150,
+          "description" : "Наименование признака исполнения функций ФО/ОУГВФ"
+        },
+        "ougvCode" : {
+          "type" : "string",
+          "maxLength" : 1,
+          "description" : "Код признака исполнения функций ФО/ОУГВФ"
+        },
+        "uoName" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование УО по Сводному реестру"
+        },
+        "uoCode" : {
+          "type" : "string",
+          "minLength" : 8,
+          "maxLength" : 8,
+          "description" : "Код УО по Сводному реестру"
+        },
+        "creatorKindName" : {
+          "type" : "string",
+          "maxLength" : 150,
+          "description" : "Наименование вида ППО, создавшего организацию"
+        },
+        "creatorKindCode" : {
+          "type" : "string",
+          "maxLength" : 2,
+          "description" : "Код вида ППО, создавшего организацию"
+        },
+        "creatorPlaceName" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование территории публично-правового образования по ОКТМО"
+        },
+        "creatorPlaceCode" : {
+          "type" : "string",
+          "maxLength" : 11,
+          "description" : "Код территории публично-правового образования по ОКТМО"
+        },
+        "founderKindName" : {
+          "type" : "string",
+          "maxLength" : 150,
+          "description" : "Наименование вида публично-правового образования по ОКТМО - учредителя (участника)"
+        },
+        "founderKindCode" : {
+          "type" : "string",
+          "maxLength" : 2,
+          "description" : "Код вида публично-правового образования по ОКТМО - учредителя (участника)"
+        },
+        "founderPlaceName" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование территории публично-правового образования по ОКТМО - учредителя (участника)"
+        },
+        "founderPlaceCode" : {
+          "type" : "string",
+          "maxLength" : 11,
+          "description" : "Код территории публично-правового образования по ОКТМО - учредителя (участника)"
+        },
+        "budgetLvlName" : {
+          "type" : "string",
+          "maxLength" : 150,
+          "description" : "Наименование уровня бюджета организации"
+        },
+        "budgetLvlCode" : {
+          "type" : "string",
+          "maxLength" : 2,
+          "description" : "Код уровня бюджета организации"
+        },
+        "budgetName" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование бюджета организации"
+        },
+        "budgetCode" : {
+          "type" : "string",
+          "maxLength" : 8,
+          "description" : "Код бюджета организации"
+        },
+        "statusCode" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 1,
+          "description" : "Код статуса организации"
+        },
+        "statusName" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 100,
+          "description" : "Наименование статуса организации"
+        },
+        "regionType" : {
+          "type" : "string",
+          "maxLength" : 10,
+          "description" : "Тип субъекта"
+        },
+        "regionName" : {
+          "type" : "string",
+          "maxLength" : 1000,
+          "description" : "Наименование субъекта"
+        },
+        "isOGV" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 3,
+          "description" : "Является ОГВ"
+        },
+        "isObosob" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 3,
+          "description" : "Признак, указывающий, является ли организация обособленным подразделением"
+        },
+        "orgStatus" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 1,
+          "description" : "Наименование статуса организации"
+        },
+        "recordNum" : {
+          "type" : "string",
+          "minLength" : 20,
+          "maxLength" : 20,
+          "description" : "Уникальный номер реестровой записи"
+        },
+        "parentCode" : {
+          "type" : "string",
+          "maxLength" : 8,
+          "description" : "Код вышестоящего УБП по Сводному реестру"
+        },
+        "parentName" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование вышестоящего УБП по Сводному реестру"
+        },
+        "okatoCode" : {
+          "type" : "string",
+          "maxLength" : 11,
+          "description" : "Код по ОКATO"
+        },
+        "okatoName" : {
+          "type" : "string",
+          "maxLength" : 250,
+          "description" : "Наименование по ОКАТО"
+        },
+        "guid" : {
+          "type" : "string",
+          "minLength" : 36,
+          "maxLength" : 36,
+          "description" : "Глобально-уникальный идентификатор записи"
+        },
+        "status" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 1,
+          "description" : "Статус записи"
+        },
+        "controlNum" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 1,
+          "description" : "Контрольное число"
+        },
+        "bidNum" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 20,
+          "description" : "Номер заявки на включение записи"
+        },
+        "firstRegDate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата заявки на включение записи"
+        },
+        "firstRegGuid" : {
+          "type" : "string",
+          "minLength" : 36,
+          "maxLength" : 36,
+          "description" : "ГУИД заявки на включение записи"
+        },
+        "lastRegGuid" : {
+          "type" : "string",
+          "minLength" : 36,
+          "maxLength" : 36,
+          "description" : "ГУИД последней заявки на изменение"
+        },
+        "lastRegDate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата последней заявки на изменение"
+        },
+        "lastRegNum" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 20,
+          "description" : "Номер последней заявки на изменение"
+        },
+        "updateReason" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 1,
+          "description" : "Основание изменения записи"
+        },
+        "updateNum" : {
+          "type" : "string",
+          "maxLength" : 9,
+          "description" : "Номер изменения реестровой записи"
+        },
+        "inclusionDate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата включения организации в Сводный реестр"
+        },
+        "exclusionDate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата исключения организации из Сводного реестра"
+        },
+        "pubpCode" : {
+          "type" : "string",
+          "maxLength" : 5,
+          "description" : "Код ПУБП"
+        },
+        "rubpCode" : {
+          "type" : "string",
+          "maxLength" : 5,
+          "description" : "Код РУБП"
+        },
+        "nubpCode" : {
+          "type" : "string",
+          "maxLength" : 5,
+          "description" : "Код НУБП"
+        },
+        "cpzCode" : {
+          "type" : "string",
+          "maxLength" : 11,
+          "description" : "Код СПЗ"
+        },
+        "pgmyCode" : {
+          "type" : "string",
+          "maxLength" : 13,
+          "description" : "Код ПГМУ"
+        },
+        "firmName" : {
+          "type" : "string",
+          "maxLength" : 1000,
+          "description" : "Фирменное наименование"
+        },
+        "kofkCode" : {
+          "type" : "string",
+          "maxLength" : 4,
+          "description" : "Код по КОФК собственный"
+        },
+        "nameDocs" : {
+          "type" : "string",
+          "maxLength" : 160,
+          "description" : "Сокращенное наименование, непредусмотренное учредительными документами"
+        },
+        "accMgmt" : {
+          "type" : "string",
+          "maxLength" : 3,
+          "description" : "Ведение бух. учета в обособленном подразделении"
+        },
+        "naibznachuch" : {
+          "type" : "string",
+          "maxLength" : 3,
+          "description" : "Наиболее значимое учреждение"
+        },
+        "regionCode" : {
+          "type" : "string",
+          "maxLength" : 2,
+          "description" : "Код субъекта"
+        },
+        "areaCode" : {
+          "type" : "string",
+          "maxLength" : 13,
+          "description" : "Район КЛАДР"
+        },
+        "areaType" : {
+          "type" : "string",
+          "maxLength" : 10,
+          "description" : "Тип района"
+        },
+        "areaName" : {
+          "type" : "string",
+          "maxLength" : 1000,
+          "description" : "Наименование района"
+        },
+        "cityCode" : {
+          "type" : "string",
+          "maxLength" : 13,
+          "description" : "Город КЛАДР"
+        },
+        "localCode" : {
+          "type" : "string",
+          "maxLength" : 13,
+          "description" : "Населенный пункт"
+        },
+        "localName" : {
+          "type" : "string",
+          "maxLength" : 1000,
+          "description" : "Наименование населенного пункта"
+        },
+        "localType" : {
+          "type" : "string",
+          "maxLength" : 10,
+          "description" : "Тип населенного пункта"
+        },
+        "streetCode" : {
+          "type" : "string",
+          "maxLength" : 17,
+          "description" : "Улица"
+        },
+        "building" : {
+          "type" : "string",
+          "maxLength" : 50,
+          "description" : "Корпус"
+        },
+        "apartment" : {
+          "type" : "string",
+          "maxLength" : 50,
+          "description" : "Офис"
+        },
+        "reformationDocument" : {
+          "type" : "string",
+          "maxLength" : 1000,
+          "description" : "Наименование документа о реорган./ликвид"
+        },
+        "reformationDocumentNum" : {
+          "type" : "string",
+          "maxLength" : 40,
+          "description" : "Номер документа о реорган./ликвид"
+        },
+        "reformationDocumentDate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата документа о реорган./ликвид"
+        },
+        "reformationName" : {
+          "type" : "string",
+          "maxLength" : 3,
+          "description" : "Наименование формы реорганизации"
+        },
+        "reformationCode" : {
+          "type" : "string",
+          "maxLength" : 255,
+          "description" : "Код формы реорганизации"
+        },
+        "reformationStartDate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата начала процесса реорганизации"
+        },
+        "reformationEndDate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата прекращения реорганизации юридического лица"
+        },
+        "dateUpdate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата обновления записи в НСИ ЭБ и выгрузки на ЕПБС"
+        },
+        "isExcluded" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 3,
+          "description" : "Признак, указывающий, находится ли организация в процессе исключения из Сводного реестра"
+        },
+        "isReorg" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 3,
+          "description" : "Признак, указывающий, требуется ли реорганизация в связи с исключением вышестоящей организации из Сводного реестра"
+        },
+        "startDate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата начала действия записи"
+        },
+        "endDate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата окончания действия записи"
+        },
+        "loadDate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата загрузки записи на ЕПБС"
+        },
+        "regionKladrCode" : {
+          "type" : "string",
+          "maxLength" : 13,
+          "description" : "Регион (код по КЛАДР)"
+        },
+        "egrulnotincluded" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : ""
+        },
+        "parentrecordnum" : {
+          "type" : "string",
+          "maxLength" : 20,
+          "description" : "Сведения о присвоенном уникальном номере реестровой записи организации, в отношении которой осуществляются специальные мероприятия"
+        },
+        "planningstructuretype" : {
+          "type" : "string",
+          "maxLength" : 10,
+          "description" : "Тип элемента планировочной структуры"
+        },
+        "planningstructurename" : {
+          "type" : "string",
+          "maxLength" : 1000,
+          "description" : "Наименование элемента планировочной структуры"
+        },
+        "contourTypeCode" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 1,
+          "description" : "Код типа контура"
+        },
+        "specEventCode" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Код наименования специального мероприятия в отношении организации"
+        },
+        "speceventcodedop1" : {
+          "type" : "string",
+          "maxLength" : 1,
+          "description" : "Код наименования специального мероприятия в отношении организации"
+        },
+        "speceventcodedop2" : {
+          "type" : "string",
+          "maxLength" : 1,
+          "description" : "Код наименования специального мероприятия в отношении организации"
+        },
+        "speceventcodedop3" : {
+          "type" : "string",
+          "maxLength" : 1,
+          "description" : "Код наименования специального мероприятия в отношении организации"
+        },
+        "dsp" : {
+          "type" : "string",
+          "description" : "ДСП"
+        },
+        "isUch" : {
+          "type" : "string",
+          "maxLength" : 3,
+          "description" : "Осуществляет функции учредителя"
+        },
+        "reforfkCode" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Ссылка по реквизиту orfkCode  на запись в  справочнике 7710568760-TOFK"
+        }
+      }
+    },
+    "RubpEntryAuthority" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "description" : "Органы, осуществляющие функции и полномочия учредителя",
+      "properties" : {
+        "authorityCode" : {
+          "type" : "string",
+          "minLength" : 8,
+          "maxLength" : 8,
+          "description" : "Код органа"
+        },
+        "authorityName" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование органа"
+        },
+        "permissions" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/RubpEntryAuthorityPermission"
+          },
+          "description" : "Полномочия"
+        }
+      }
+    },
+    "RubpEntryAuthorityPermission" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "description" : "Полномочие",
+      "properties" : {
+        "permissionCode" : {
+          "type" : "string",
+          "minLength" : 3,
+          "maxLength" : 3,
+          "description" : "Код полномочия"
+        },
+        "permissionName" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование полномочия"
+        }
+      }
+    },
+    "RubpEntryActivity" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "description" : "Вид деятельности организации",
+      "properties" : {
+        "activityCode" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 8,
+          "description" : "Код вида деятельности"
+        },
+        "activityName" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 500,
+          "description" : "Наименование вида деятельности"
+        },
+        "activityKind" : {
+          "type" : "string",
+          "minLength" : 4,
+          "maxLength" : 8,
+          "description" : "Код типа вида деятельности"
+        }
+      }
+    },
+    "RubpEntryHead" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "description" : "Руководитель организации",
+      "properties" : {
+        "fio" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Фамилия, имя, отчество руководителя"
+        },
+        "post" : {
+          "type" : "string",
+          "maxLength" : 255,
+          "description" : "Должность руководителя"
+        },
+        "docName" : {
+          "type" : "string",
+          "maxLength" : 1000,
+          "description" : "Наименование документа о назначении руководителя организации"
+        },
+        "docNum" : {
+          "type" : "string",
+          "maxLength" : 40,
+          "description" : "Номер документа о назначении руководителя организации"
+        },
+        "docDate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата документа о назначении руководителя организации"
+        },
+        "headMain" : {
+          "type" : "string",
+          "maxLength" : 5,
+          "description" : "Признак, указывающий, является ли руководитель «первым лицом» организации"
+        }
+      }
+    },
+    "RubpEntrySuccession" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "description" : "Сведения о правопреемстве",
+      "properties" : {
+        "parentName" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 2000,
+          "description" : "Полное наименование предшественника"
+        },
+        "parentCode" : {
+          "type" : "string",
+          "maxLength" : 8,
+          "description" : "Код предшественника по Сводному реестру"
+        },
+        "ogrn" : {
+          "type" : "string",
+          "maxLength" : 13,
+          "description" : "ОГРН предшественника. При наличии указывается основной государственный регистрационный номер юридического лица, правопреемником которого является организация, в соответствии со сведениями ЕГРЮЛ"
+        },
+        "docname" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование документа, подтверждающего сведения о правопреемстве"
+        },
+        "numberdoc" : {
+          "type" : "string",
+          "maxLength" : 100,
+          "description" : "Номер документа, подтверждающего сведения о правопреемстве. Если источник данных = ЕГРЮЛ, поле не заполняется"
+        },
+        "documentdate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата документа, подтверждающего сведения о правопреемстве. Если источник данных = ЕГРЮЛ, поле не заполняется"
+        },
+        "datasource" : {
+          "type" : "string",
+          "maxLength" : 1,
+          "description" : "Источник данных. Возможные значения: 1 = «ЕГРЮЛ» 2 = «УО»"
+        }
+      }
+    },
+    "RubpEntryAccountFK" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "description" : "Сведения о лицевых счетах, открытых в территориальных органах Федерального казначейства",
+      "properties" : {
+        "kindName" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 150,
+          "description" : "Наименование типа лицевого счета"
+        },
+        "kindCode" : {
+          "type" : "string",
+          "minLength" : 2,
+          "maxLength" : 2,
+          "description" : "Код типа лицевого счета"
+        },
+        "num" : {
+          "type" : "string",
+          "minLength" : 11,
+          "maxLength" : 11,
+          "description" : "Номер лицевого счета"
+        },
+        "createDate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата открытия"
+        },
+        "closeDate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата закрытия"
+        },
+        "status" : {
+          "type" : "string",
+          "minLength" : 6,
+          "maxLength" : 6,
+          "description" : "Код статуса лицевого счета"
+        },
+        "openUfkCode" : {
+          "type" : "string",
+          "minLength" : 4,
+          "maxLength" : 4,
+          "description" : "Код ТОФК по месту открытия"
+        },
+        "openUfkName" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Полное наименование ТОФК по месту открытия"
+        },
+        "openTofkName" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование ТОФК по месту открытия по Сводному реестру"
+        },
+        "srvUfkCode" : {
+          "type" : "string",
+          "minLength" : 4,
+          "maxLength" : 4,
+          "description" : "Код ОрФК по месту обслуживания"
+        },
+        "srvUfkName" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Полное наименование ТОФК по месту обслуживания"
+        },
+        "accountorgcode" : {
+          "type" : "string",
+          "maxLength" : 8,
+          "description" : "Код по Сводному реестру ПБС принимающего полномочия"
+        },
+        "accountorgfullname" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование по Сводному реестру ПБС принимающего полномочия"
+        },
+        "ppocode" : {
+          "type" : "string",
+          "maxLength" : 8,
+          "description" : "Код территории публично-правового образования"
+        },
+        "pponame" : {
+          "type" : "string",
+          "maxLength" : 250,
+          "description" : "Наименование территории публично-правового образования"
+        },
+        "refsrvUfkCode" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Ссылка по атрибуту srvUfkCode на запись в справочнике 7710568760-TOFK"
+        },
+        "refopenUfkCode" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Ссылка по атрибуту openUfkCode на запись в справочнике 7710568760-TOFK"
+        }
+      }
+    },
+    "RubpEntryAccountFO" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "description" : "Сведения о лицевых счетах, открытых в финансовых органах",
+      "properties" : {
+        "foName" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 2000,
+          "description" : "Наименование ФО"
+        },
+        "foCode" : {
+          "type" : "string",
+          "minLength" : 8,
+          "maxLength" : 8,
+          "description" : "Код ФО"
+        },
+        "accountTypeName" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 150,
+          "description" : "Наименование типа лицевого счета в ФО"
+        },
+        "num" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 11,
+          "description" : "Номер лицевого счета"
+        }
+      }
+    },
+    "RubpEntryParticipantPermission" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "description" : "Полномочия УБП",
+      "properties" : {
+        "name" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 2000,
+          "description" : "Наименование полномочия"
+        },
+        "code" : {
+          "type" : "string",
+          "minLength" : 3,
+          "maxLength" : 3,
+          "description" : "Код полномочия"
+        },
+        "startDate" : {
+          "type" : "string",
+          "pattern" : "^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$",
+          "description" : "Дата начала действия полномочия"
+        },
+        "endDate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата окончания действия полномочия"
+        }
+      }
+    },
+    "RubpEntryNonParticipantPermission" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "description" : "Полномочия НУБП",
+      "properties" : {
+        "name" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 2000,
+          "description" : "Наименование полномочия"
+        },
+        "registryNum" : {
+          "type" : "string",
+          "minLength" : 5,
+          "maxLength" : 5,
+          "description" : "Учетный номер организации"
+        },
+        "code" : {
+          "type" : "string",
+          "minLength" : 3,
+          "maxLength" : 3,
+          "description" : "Код полномочия "
+        },
+        "startDate" : {
+          "type" : "string",
+          "pattern" : "^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$",
+          "description" : "Дата начала действия полномочия"
+        },
+        "endDate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата окончания действия полномочия"
+        },
+        "authBudgName" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 2000,
+          "description" : "Наименование бюджета в рамках которого  предоставлены полномочия НУБП"
+        },
+        "authBudgCode" : {
+          "type" : "string",
+          "minLength" : 8,
+          "maxLength" : 8,
+          "description" : "Код бюджета, в рамках которого  предоставлены полномочия НУБП"
+        },
+        "authPPOName" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование ППО"
+        },
+        "authPPOCode" : {
+          "type" : "string",
+          "maxLength" : 11,
+          "description" : "Код ППО"
+        },
+        "authKBKGlavaName" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 2000,
+          "description" : "Наименование главы по БК"
+        },
+        "authKBKGlavaCode" : {
+          "type" : "string",
+          "minLength" : 3,
+          "maxLength" : 3,
+          "description" : "Код главы по БК"
+        }
+      }
+    },
+    "RubpEntryProcurementPermission" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "description" : "Полномочия организации в сфере госзакупок",
+      "properties" : {
+        "name" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 2000,
+          "description" : "Наименование полномочия"
+        },
+        "code" : {
+          "type" : "string",
+          "minLength" : 3,
+          "maxLength" : 3,
+          "description" : "Код полномочия "
+        },
+        "startDate" : {
+          "type" : "string",
+          "pattern" : "^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$",
+          "description" : "Дата начала действия полномочия"
+        },
+        "endDate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата окончания действия полномочия"
+        }
+      }
+    },
+    "RubpEntryContact" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "description" : "Иная информация",
+      "properties" : {
+        "phone" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 100,
+          "description" : "Телефон организации"
+        },
+        "site" : {
+          "type" : "string",
+          "maxLength" : 250,
+          "description" : "Сайт организации"
+        },
+        "mail" : {
+          "type" : "string",
+          "maxLength" : 30,
+          "description" : "Электронная почта"
+        }
+      }
+    },
+    "RubpEntryAcceptAuth" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "description" : "Полномочия организации принятые",
+      "properties" : {
+        "name" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 2000,
+          "description" : "Наименование полномочия"
+        },
+        "code" : {
+          "type" : "string",
+          "minLength" : 3,
+          "maxLength" : 3,
+          "description" : "Код полномочия"
+        },
+        "startDate" : {
+          "type" : "string",
+          "pattern" : "^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$",
+          "description" : "Дата начала действия полномочия"
+        },
+        "endDate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата окончания действия полномочия"
+        },
+        "authBudgName" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование бюджета принятого полномочия"
+        },
+        "authBudgCode" : {
+          "type" : "string",
+          "maxLength" : 8,
+          "description" : "Код бюджета принятого полномочия"
+        },
+        "authPPOName" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование ППО бюджета принятого полномочия"
+        },
+        "authPPOCode" : {
+          "type" : "string",
+          "maxLength" : 11,
+          "description" : "Код ППО бюджета принятого полномочия"
+        },
+        "authKBKGlavaName" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование главы по БК"
+        },
+        "authKBKGlavaCode" : {
+          "type" : "string",
+          "maxLength" : 3,
+          "description" : "Код главы по БК"
+        },
+        "authGiverCode" : {
+          "type" : "string",
+          "maxLength" : 8,
+          "description" : "Код организации, передавшей полномочия"
+        },
+        "authGiverName" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование организации, передавшей полномочия"
+        },
+        "userArea" : {
+          "type" : "string",
+          "maxLength" : 4,
+          "description" : "Область применения полномочий"
+        },
+        "authRegNum" : {
+          "type" : "string",
+          "maxLength" : 5,
+          "description" : "Учетный номер организации, принявшей полномочия"
+        }
+      }
+    },
+    "RubpEntryTransfAuth" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "description" : "Сведения о передаче полномочий финансового органа поселения финансовому органу муниципального района",
+      "properties" : {
+        "authfovillagescode" : {
+          "type" : "string",
+          "maxLength" : 8,
+          "description" : "Код ФО, передавшего полномочия"
+        },
+        "authfovillagesname" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование ФО, передавшего полномочия"
+        },
+        "authfomunicipalcode" : {
+          "type" : "string",
+          "maxLength" : 8,
+          "description" : "Код ФО муниципального органа"
+        },
+        "authfomunicipalname" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование ФО муниципального органа"
+        },
+        "authstartdate" : {
+          "type" : "string",
+          "pattern" : "^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$",
+          "description" : "Дата начала действия полномочия"
+        },
+        "authenddate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата окончания действия полномочия"
+        },
+        "kbkglavacode" : {
+          "type" : "string",
+          "maxLength" : 3,
+          "description" : "Код главы по БК"
+        },
+        "budgetcode" : {
+          "type" : "string",
+          "maxLength" : 8,
+          "description" : "Код бюджета"
+        },
+        "authregnum" : {
+          "type" : "string",
+          "maxLength" : 6,
+          "description" : ""
+        },
+        "authfovillagesppocode" : {
+          "type" : "string",
+          "maxLength" : 8,
+          "description" : "Код территории публично-правового образования финансового органа, передавшего полномочия"
+        },
+        "authfovillagespponame" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование территории публично-правового образования финансового органа, передавшего полномочия"
+        }
+      }
+    },
+    "RubpEntryAttachment" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "mime" : {
+          "type" : "string"
+        },
+        "id" : {
+          "type" : "string"
+        }
+      }
+    },
+    "RubpEntryContract" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "description" : "Основание для включения организации в Сводный реестр",
+      "properties" : {
+        "contractnumber" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 250,
+          "description" : "Номер контракта"
+        },
+        "signdate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата заключения контракта"
+        },
+        "orgcodecontract" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 8,
+          "description" : "Код по Сводному реестру организации, заключившей государственный (муниципальный) контракт"
+        },
+        "orgnamecontract" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 2000,
+          "description" : "Наименование по Сводному реестру организации, заключившей государственный (муниципальный) контракт"
+        }
+      }
+    },
+    "RubpEntryUbpTransfAuthbp" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "description" : "Переданные полномочия исполнительно-распорядительного органа",
+      "properties" : {
+        "ppocode" : {
+          "type" : "string",
+          "minLength" : 8,
+          "maxLength" : 8,
+          "description" : "ППО по ОКТМО"
+        },
+        "pponame" : {
+          "type" : "string",
+          "maxLength" : 250,
+          "description" : "Наименование ППО по ОКТМО"
+        },
+        "budlevelnsiname" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 250,
+          "description" : "Наименование уровня бюджета. Возможны только два значения: 33 - бюджет городского поселения 34 - бюджет сельского поселения"
+        },
+        "budlevelnsicode" : {
+          "type" : "string",
+          "minLength" : 2,
+          "maxLength" : 2,
+          "description" : "Уровень бюджета. Возможны только два значения: 33 - бюджет городского поселения 34 - бюджет сельского поселения"
+        },
+        "budgetnsiname" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 250,
+          "description" : "Наименование бюджета"
+        },
+        "budgetnsicode" : {
+          "type" : "string",
+          "minLength" : 8,
+          "maxLength" : 8,
+          "description" : "Бюджет"
+        },
+        "codebk" : {
+          "type" : "string",
+          "maxLength" : 3,
+          "description" : "Глава по БК"
+        },
+        "headname" : {
+          "type" : "string",
+          "maxLength" : 250,
+          "description" : "Наименование Главы по БК"
+        }
+      }
+    },
+    "RubpEntryUbpTransfAuthbu" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "description" : "Переданные полномочия по ведению бюджетного учета",
+      "properties" : {
+        "authbuauthorgcode" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 50,
+          "description" : "Код организации, передавшей полномочия. Код по Сводному реестру."
+        },
+        "authbuauthname" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 2000,
+          "description" : "Наименование организации, передавшей полномочия. Указывается полное наименование организации, передавшей полномочия."
+        },
+        "authbustartdate" : {
+          "type" : "string",
+          "pattern" : "^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$",
+          "description" : "Дата начала действия полномочия"
+        },
+        "authbuenddate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата окончания действия полномочия"
+        }
+      }
+    },
+    "RubpEntryUbpfin" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "description" : "Сведения о праве организации получать источник дополнительного бюджетного финансирования",
+      "properties" : {
+        "findocname" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Указывается наименование нормативного правового акта – основания, устанавливающего право организации на получение источника дополнительного бюджетного финансирования"
+        },
+        "findocnum" : {
+          "type" : "string",
+          "maxLength" : 50,
+          "description" : "Указывается номер нормативного правового акта – основания, устанавливающего право организации на получение источника дополнительного бюджетного финансирования"
+        },
+        "findocdate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Указывается дата ввода в действие нормативного правового акта – основания, устанавливающего право организации на получение источника дополнительного бюджетного финансирования"
+        }
+      }
+    },
+    "RubpEntryKsAccount" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "properties" : {
+        "num" : {
+          "type" : "string",
+          "maxLength" : 11,
+          "description" : "Номер счета"
+        },
+        "opendate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата открытия"
+        },
+        "closedate" : {
+          "type" : "string",
+          "pattern" : "(^[0-9]{4}-[01][0-9]-[0123][0-9] [0-9]{2}:[0-9]{2}:[0-9]{2}\\.0$)|(^$)",
+          "description" : "Дата закрытия"
+        },
+        "opentofkcode" : {
+          "type" : "string",
+          "maxLength" : 8,
+          "description" : "ТОФК открытия ЛС"
+        },
+        "opentofkname" : {
+          "type" : "string",
+          "maxLength" : 2000,
+          "description" : "Наименование ТОФК открытия"
+        },
+        "refsrvufkcode" : {
+          "type" : "string",
+          "maxLength" : 4,
+          "description" : "ТОФК  обслуживания ЛС"
+        },
+        "accountvidname" : {
+          "type" : "string",
+          "maxLength" : 500,
+          "description" : "Наименование вида КС"
+        },
+        "ppocode" : {
+          "type" : "string",
+          "maxLength" : 8,
+          "description" : "Код ОКТМО ППО"
+        }
+      }
+    },
+    "BlockLimitations" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "properties" : {
+        "size" : {
+          "type" : "integer",
+          "description" : "Размер порции данных блока"
+        },
+        "offset" : {
+          "type" : "integer",
+          "description" : "Смещение порции данных блока"
+        },
+        "count" : {
+          "type" : "integer",
+          "description" : "Общее число записей в блоке"
+        }
+      },
+      "required" : [ "size", "offset", "count" ]
+    }
+  }
+}

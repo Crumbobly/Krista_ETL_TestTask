@@ -1,0 +1,6 @@
+/.idea
+/.idea/*
+/.mvn
+/data/postgres/*
+/data/clickhouse/*
+/target
