@@ -22,3 +22,4 @@ services:
       - "5433:5432"
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
+      - ./init/clickhouse:/docker-entrypoint-initdb.d

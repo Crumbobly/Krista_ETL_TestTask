@@ -22,27 +22,10 @@ public class ClickhouseWorker {
 
 
     private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(ClickhouseConfig.URL_DB, ClickhouseConfig.USER, ClickhouseConfig.PASSWORD);
-    }
-
-    public void crateDb() {
-        try (final Connection connection = DriverManager.getConnection(
-                ClickhouseConfig.URL,
-                ClickhouseConfig.USER,
-                ClickhouseConfig.PASSWORD)
-        ) {
-            final Statement statement = connection.createStatement();
-            final String sql = FileUtils.readFile(createScriptPath);
-            statement.execute(sql);
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        return DriverManager.getConnection(ClickhouseConfig.URL, ClickhouseConfig.USER, ClickhouseConfig.PASSWORD);
     }
 
     public void initialize() {
-
-        crateDb();
 
         try (final Connection connection = getConnection()) {
             final Statement statement = connection.createStatement();
