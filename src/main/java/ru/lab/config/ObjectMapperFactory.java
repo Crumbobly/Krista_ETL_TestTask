@@ -1,6 +1,10 @@
 package ru.lab.config;
 
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -10,6 +14,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,7 +22,6 @@ import java.time.format.DateTimeFormatter;
 public final class ObjectMapperFactory {
 
     private static final ObjectMapper MAPPER = create();
-
 
     public static ObjectMapper getMapper() {
         return MAPPER;
@@ -38,4 +42,22 @@ public final class ObjectMapperFactory {
                 .build().
                 registerModule(module);
     }
+
+
+    private static class BooleanDeserializer extends JsonDeserializer<Boolean> {
+
+        @Override
+        public Boolean deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+            String value = p.getText();
+
+            if ("1".equals(value)) {
+                return Boolean.TRUE;
+            } else if ("0".equals(value)) {
+                return Boolean.FALSE;
+            }
+
+            return Boolean.parseBoolean(value);
+        }
+    }
+
 }

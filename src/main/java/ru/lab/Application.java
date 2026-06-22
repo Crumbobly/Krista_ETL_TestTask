@@ -1,72 +1,37 @@
 package ru.lab;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.lab.config.DBConfig;
-import ru.lab.config.ObjectMapperFactory;
-import ru.lab.database.impl.DatabaseWorkerImpl;
-import ru.lab.dto.EBudgetResponseDto;
-import ru.lab.dto.ResponseDto;
-import ru.lab.service.EBudgetApiService;
-import ru.lab.service.EBudgetFlattenerService;
+import ru.lab.dto.LoadContextDto;
+import ru.lab.service.LoaderService;
 
-import java.io.IOException;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
 
 public class Application {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(Application.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
     public static void main(String[] args) {
 
-        final DatabaseWorkerImpl databaseWorker = new DatabaseWorkerImpl();
-        databaseWorker.initialize();
+        LocalDate from;
+        LocalDate to;
+        int pageSize;
 
-        final ObjectMapper mapper = ObjectMapperFactory.getMapper();
-        final EBudgetApiService apiService = new EBudgetApiService();
-        final EBudgetFlattenerService flattenerService = new EBudgetFlattenerService();
-
-        final LocalDate from = LocalDate.of(2025, 11, 11);
-        final LocalDate to = LocalDate.of(2025, 11, 12);
-
-        int page = 1;
-        while (true){
-            LOGGER.info("Выполнение запроса, page {}", page);
-            final String responseRaw = apiService.getPage(from, to, page);
-
-            try {
-                final ResponseDto responseDto = mapper.readValue(responseRaw, ResponseDto.class);
-                final List<EBudgetResponseDto> eBudgetResponseDtoList = responseDto.getData();
-
-                for (EBudgetResponseDto eBudgetResponseDto : eBudgetResponseDtoList) {
-                    Map<String, Object> flatDto = flattenerService.flat(eBudgetResponseDto);
-
-                    // сделать меньше запросов
-                    databaseWorker.addMissingColumns(flatDto.keySet());
-                }
-
-
-                LOGGER.info("Запрос выполнен, page {}, total {}", page, responseDto.getPageCount());
-                if (responseDto.getPageCount() == page){
-                    break;
-                }
-                else{
-                    page += 1;
-                }
-
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            }
-
+        if (args.length >= 2) {
+            from = LocalDate.parse(args[0]);
+            to = LocalDate.parse(args[1]);
+            pageSize = Integer.parseInt(args[2]);
+        }
+        else{
+            from = LocalDate.of(2025, 11, 12);
+            to = LocalDate.of(2025, 11, 19);
+            pageSize = 1000;
+            LOGGER.info("Аргументы не были переданы, взяты значения по умолчанию.");
         }
 
-
-
-
+        final LoadContextDto loadContextDto = new LoadContextDto(from, to, pageSize);
+        LoaderService loaderService = new LoaderService();
+        loaderService.load(loadContextDto);
     }
 }

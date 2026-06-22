@@ -2,14 +2,16 @@
 
 services:
 
-#  clickhouse:
-#    image: clickhouse:26.5.1
-#    container_name: clickhouse
-#    env_file:
-#      - ./.env
-#    ports:
-#      - "8123:8123"
-#      - "9000:9000"
+  clickhouse:
+    image: clickhouse:26.5.1
+    container_name: clickhouse
+    env_file:
+      - ./.env
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - ./data/clickhouse:/var/lib/clickhouse
 
   postgres:
     image: postgres:17

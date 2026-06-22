@@ -9,6 +9,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.lab.dto.LoadContextDto;
 
 import java.io.IOException;
 import java.net.URI;
@@ -29,25 +30,13 @@ public class EBudgetApiService {
         this.httpClient = HttpClients.createDefault();
     }
 
-    public String getPage(
-            LocalDate from,
-            LocalDate to,
-            int pageNumber
-    ) {
-        return getPage(from, to, pageNumber, 100);
-    }
 
     // Если pageSize слишком большой - большая нагрузка на ОЗУ
-    // pageSize = 1000 -> на странице 1000 объектов -> около 100 Мб
-    @Deprecated
-    public String getPage(
-            LocalDate from,
-            LocalDate to,
-            int pageNumber,
-            int pageSize) {
+    // pageSize = 10000 -> на странице 10000 объектов -> 100 Мб +
+    public String getPage(LoadContextDto loadContextDto, int pageNumber) {
 
         try {
-            final URI uri = buildUri(from, to, pageNumber, pageSize);
+            final URI uri = buildUri(loadContextDto.getFrom(), loadContextDto.getTo(), pageNumber, loadContextDto.getPageSize());
             LOGGER.info("Запрос {}", uri);
             final HttpGet request = new HttpGet(uri);
 

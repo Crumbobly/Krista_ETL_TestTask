@@ -1,6 +1,7 @@
 /.idea
-/.idea/*
 /.mvn
-/data/postgres/*
-/data/clickhouse/*
+/data/postgres/
+/data/clickhouse/
+/data/archives/
 /target
+dumu_dumat.txt
