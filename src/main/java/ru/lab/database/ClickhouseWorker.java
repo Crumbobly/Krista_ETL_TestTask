@@ -13,34 +13,34 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ClickhouseWorker {
+/**
+Класс для работы с базой данных ClickHouse.
+ */
+public class ClickhouseWorker extends DatabaseWorker {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ClickhouseWorker.class);
-
     private final static String initScriptPath = "db/clickhouse/init.sql";
-    private final static String createScriptPath = "db/clickhouse/create_db.sql";
 
-
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(ClickhouseConfig.URL, ClickhouseConfig.USER, ClickhouseConfig.PASSWORD);
+    public ClickhouseWorker() {
+        super(ClickhouseConfig.URL, ClickhouseConfig.USER, ClickhouseConfig.PASSWORD);
     }
 
     public void initialize() {
-
-        try (final Connection connection = getConnection()) {
-            final Statement statement = connection.createStatement();
-            final String sql = FileUtils.readFile(initScriptPath);
-            LOGGER.info("initialize clickhouse {}", initScriptPath);
-            statement.execute(sql);
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        executeScript(initScriptPath);
     }
 
-
-    public void sync(LocalDateTime now) {
-        LOGGER.info("Синхронизация Clickhouse - дата обрезки - {}", now);
+    /**
+     * Выгрузка данных в ClickHouse.
+     * <p>
+     * --- Not implemented yet ---
+     *
+     * @param cutTime Время последней актуальной записи.
+     */
+    public void sync(LocalDateTime cutTime) {
+        LOGGER.info("Синхронизация Clickhouse - дата обрезки - {}", cutTime);
         LOGGER.info("Not implemented yet");
+        //  Тут должно быть примерно это:
+        //  Делаем select (с offset) где updated_at >= cutTime
+        //  И загружаем эти куски по очереди в Clickhouse
     }
 }

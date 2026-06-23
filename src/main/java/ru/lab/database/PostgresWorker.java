@@ -9,7 +9,6 @@ import ru.lab.service.flattener.FlattenerService;
 import ru.lab.utils.FileUtils;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,11 +20,13 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 import java.util.stream.Collectors;
 
 
-public class PostgresWorker {
+/**
+ Класс для работы с базой данных Postgres.
+ */
+public class PostgresWorker extends DatabaseWorker {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(PostgresWorker.class);
     private final FlattenerService flattenerService = new FlattenerService();
@@ -34,35 +35,50 @@ public class PostgresWorker {
     private final static String insertScriptPath = "db/postgres/insert.sql";
     private final static String selectColumnsScriptPath = "db/postgres/selectColumns.sql";
 
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(PostgresConfig.URL, PostgresConfig.USER, PostgresConfig.PASSWORD);
+    public PostgresWorker() {
+        super(PostgresConfig.URL, PostgresConfig.USER, PostgresConfig.PASSWORD);
     }
 
     public void initialize() {
+        executeScript(initScriptPath);
+    }
+
+    /**
+     * Метод получения названий всех столбцов таблицы, за исключением столбца id
+     * @return Список названий столбцов
+     */
+    public List<String> getColumns() {
+
+        final List<String> columns = new ArrayList<>();
 
         try (final Connection connection = getConnection()) {
-            final Statement statement = connection.createStatement();
-            final String sql = FileUtils.readFile(initScriptPath);
-            LOGGER.info("initialize postgres {}", initScriptPath);
-            statement.execute(sql);
+            final String sql = FileUtils.readFile(selectColumnsScriptPath);
+            final Statement ps = connection.createStatement();
+
+            final ResultSet rs = ps.executeQuery(sql);
+            while (rs.next()) {
+                columns.add(rs.getString("column_name"));
+            }
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        columns.remove("id");
+        return columns;
     }
 
-    private void fillStatement(PreparedStatement ps, List<String> columns, Map<String, Object> values) throws SQLException {
-
-        int i = 1;
-        for (String column : columns) {
-            final Object value = values.get(column);
-            ps.setObject(i++, value);
-        }
-    }
-
+    /**
+     * Метод подготовки данных для вставки в таблицу
+     * @param dto EBudgetResponseDto объект
+     * @param from дата начала поиска
+     * @param to дата конца поиска
+     * @param columns список названий столбцов
+     * @return Мапу соответствий (название столбца: значение)
+     */
     private Map<String, Object> prepareRow(EBudgetResponseDto dto, LocalDate from, LocalDate to, List<String> columns) {
 
-        final  Map<String, Object> row = flattenerService.flat(dto);
+        final Map<String, Object> row = flattenerService.flat(dto);
         final Map<String, Object> casedRow = row.entrySet()
                 .stream()
                 .collect(Collectors.toMap(
@@ -89,41 +105,25 @@ public class PostgresWorker {
         return values;
     }
 
-    public List<String> getColumns() {
+    /**
+     * Метод подготовки скрипта для вставки данных.
+     * Берёт шаблонный скрипт и вставляет туда данные.
+     *
+     * @param columnsList Список имен столбцов
+     * @return Подготовленный скрипт вставки
+     */
+    private String prepareBatchInsertSql(List<String> columnsList){
 
-        final List<String> columns = new ArrayList<>();
-
-        try (final Connection connection = getConnection()) {
-            final String sql = FileUtils.readFile(selectColumnsScriptPath);
-            final Statement ps = connection.createStatement();
-
-            final ResultSet rs = ps.executeQuery(sql);
-            while (rs.next()) {
-                columns.add(rs.getString("column_name"));
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        columns.remove("id");
-        return columns;
-    }
-
-    public void insertBatch(List<EBudgetResponseDto> rows, LocalDate from, LocalDate to) {
-
-        if (rows.isEmpty()) {
-            return;
-        }
-
-        final List<String> columnsList = getColumns();
-
+        // 'column_name1,column_name2,...' - названия всех столбцов через запятую
         final String columns = String.join(",", columnsList);
 
+        // '?,?,...' - ? на каждый столбец
         final String placeholders = columnsList.stream()
                 .map(c -> "?")
                 .collect(Collectors.joining(","));
 
+        // 'column_name1 = EXCLUDED.column_name1, ... '
+        // Но не берем столбец info_guid т.к. ON CONFLICT по нему.
         final String updates = columnsList.stream()
                 .filter(c -> !"info_guid".equals(c))
                 .map(c -> c + " = EXCLUDED." + c)
@@ -136,7 +136,24 @@ public class PostgresWorker {
         params.put("updates", updates);
 
         final String rawSql = FileUtils.readFile(insertScriptPath);
-        final String sql = SqlTemplateEngine.process(rawSql, params);
+        return SqlTemplateEngine.process(rawSql, params);
+    }
+
+    /**
+     * Метод вставки набора объектов в таблицу
+     *
+     * @param rows Список с объектами EBudgetResponseDto
+     * @param from дата начала поиска
+     * @param to дата конца поиска
+     */
+    public void insertBatch(List<EBudgetResponseDto> rows, LocalDate from, LocalDate to) {
+
+        if (rows == null || rows.isEmpty()) {
+            return;
+        }
+
+        final List<String> columnsList = getColumns();
+        final String sql = prepareBatchInsertSql(columnsList);
 
         try (Connection connection = getConnection()) {
 
@@ -144,13 +161,13 @@ public class PostgresWorker {
             connection.setAutoCommit(false);
 
             int count = 0;
-
             for (EBudgetResponseDto dto : rows) {
 
                 final Map<String, Object> values = prepareRow(dto, from, to, columnsList);
                 fillStatement(ps, columnsList, values);
                 ps.addBatch();
 
+                // Ограничение размера батча
                 if (++count % 1000 == 0) {
                     ps.executeBatch();
                     ps.clearBatch();
@@ -164,6 +181,24 @@ public class PostgresWorker {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Метод подготовки выражение для вставки.
+     * Заменяет '?' на нужные данные.
+     *
+     * @param ps Запрос с параметрами
+     * @param columns Список имен столбцов
+     * @param values Список значений для вставки
+     */
+    private void fillStatement(PreparedStatement ps, List<String> columns, Map<String, Object> values) throws SQLException {
+
+        int i = 1;
+        for (String column : columns) {
+            final Object value = values.get(column);
+            ps.setObject(i++, value);
+        }
+    }
+
 
 
 }
