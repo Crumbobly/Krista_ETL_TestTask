@@ -2,6 +2,10 @@ package ru.lab.database;
 
 import java.util.Map;
 
+/**
+ * Простейший шаблонизатор SQL.
+ * Заменяет конструкции вида {{key}} на соответствующие значения.
+ */
 public class SqlTemplateEngine {
 
     public static String process(String rawSql, Map<String, String> params) {

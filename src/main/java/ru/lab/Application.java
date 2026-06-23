@@ -18,14 +18,14 @@ public class Application {
         LocalDate to;
         int pageSize;
 
-        if (args.length >= 2) {
+        if (args.length >= 3) {
             from = LocalDate.parse(args[0]);
             to = LocalDate.parse(args[1]);
             pageSize = Integer.parseInt(args[2]);
         }
         else{
-            from = LocalDate.of(2024, 1, 1);
-            to = LocalDate.of(2024, 12, 31);
+            from = LocalDate.of(2026, 1, 1);
+            to = LocalDate.of(2026, 12, 31);
             pageSize = 1000;
             LOGGER.info("Аргументы не были переданы, взяты значения по умолчанию.");
         }

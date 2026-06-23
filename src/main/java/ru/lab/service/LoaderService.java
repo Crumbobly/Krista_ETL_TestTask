@@ -16,7 +16,6 @@ import java.util.List;
 
 /**
  * Основной класс приложения.
- * Вся логика тут.
  */
 public class LoaderService {
 
@@ -27,6 +26,7 @@ public class LoaderService {
     private final ClickhouseWorker clickhouseWorker = new ClickhouseWorker();
     private final EBudgetApiService apiService = new EBudgetApiService();
     private final ArchiveService archiveService = new ArchiveService();
+    private final DBSyncService dbSyncService = new DBSyncService(postgresWorker, clickhouseWorker);
 
     public void load(LoadContextDto loadContextDto) {
 
@@ -35,6 +35,8 @@ public class LoaderService {
         final LocalDateTime now = LocalDateTime.now();
 
         archiveService.deleteTmpDirectory(loadContextDto); // Предварительно очищаем папку, куда будет сохранять ответы.
+        archiveService.createTmpDirectory(loadContextDto);
+
         postgresWorker.initialize(); // Создаём табличку, если её нет
         clickhouseWorker.initialize(); // Создаём табличку, если её нет
 
@@ -67,7 +69,7 @@ public class LoaderService {
         }
 
         archiveService.zip(loadContextDto, false); // Архивируем папку с ответами
-        clickhouseWorker.sync(now); // Запускаем синхронизацию с ClickHouse
+        dbSyncService.sync(now); // Запускаем синхронизацию БД
     }
 
 }

@@ -3,6 +3,7 @@ package ru.lab.service;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.lab.config.ArchiveConfig;
 import ru.lab.config.XmlMapperFactory;
 import ru.lab.dto.LoadContextDto;
 import ru.lab.dto.XmlDto;
@@ -22,17 +23,18 @@ import java.util.zip.ZipOutputStream;
 public class ArchiveService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArchiveService.class);
-    private static final String ARCHIEVE_FOLDER = System.getenv("ARCHIEVE_FOLDER");
 
-    private final XmlMapper xmlMapper = XmlMapperFactory.getMapper();
+    private static final XmlMapper xmlMapper = XmlMapperFactory.getMapper();
 
+    /**
+     * Сохраняет сырой JSON-ответ страницы во временную директорию.
+     */
     public void saveJson(int page, LoadContextDto loadContextDto, String responseRaw) {
 
         final Path dir = getTmpDirectoryPath(loadContextDto);
+        final Path file = dir.resolve("page_" + page + ".json");
 
         try {
-            Files.createDirectories(dir);
-            Path file = dir.resolve("page_" + page + ".json");
             Files.write(file, responseRaw.getBytes(StandardCharsets.UTF_8));
         }
         catch (IOException e) {
@@ -40,34 +42,41 @@ public class ArchiveService {
         }
     }
 
+    /**
+     * Сохраняет страницу данных в XML-файл во временную директорию.
+     */
     public void saveXml(int page, LoadContextDto loadContextDto, List<EBudgetResponseDto> responseDtoLst) {
 
+        final XmlDto.Meta meta = new XmlDto.Meta();
+        meta.page = page;
+        meta.from = loadContextDto.getFrom().toString();
+        meta.to = loadContextDto.getTo().toString();
+
+        final XmlDto xml = new XmlDto();
+        xml.meta = meta;
+        xml.data = responseDtoLst;
+
         final Path dir = getTmpDirectoryPath(loadContextDto);
-
+        final Path file = dir.resolve("page_" + page + ".xml");
         try {
-            Files.createDirectories(dir);
-            final XmlDto.Meta meta = new XmlDto.Meta();
-            meta.page = page;
-            meta.from = loadContextDto.getFrom().toString();
-            meta.to = loadContextDto.getTo().toString();
-
-            final XmlDto xml = new XmlDto();
-            xml.meta = meta;
-            xml.data = responseDtoLst;
-
-            final Path file = dir.resolve("page_" + page + ".xml");
             xmlMapper.writeValue(file.toFile(), xml);
-
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 
-
+    /**
+     * Создаёт zip-архив с содержимым временной директории.
+     *
+     * @param deleteTmpFolder удалить ли временную директорию после архивирования
+     */
     public void zip(LoadContextDto loadContextDto, boolean deleteTmpFolder) {
 
         final Path dir = getTmpDirectoryPath(loadContextDto);
         final Path zipFile = Paths.get(dir + ".zip");
+        LOGGER.info("Запуск создания архива...");
 
         if(Files.exists(zipFile)) {
             try {
@@ -107,10 +116,29 @@ public class ArchiveService {
         }
     }
 
-    private Path getTmpDirectoryPath(LoadContextDto loadContextDto) {
-        return Paths.get(ARCHIEVE_FOLDER , loadContextDto.getFrom() + "_" + loadContextDto.getTo());
+    /**
+     * Создаёт временную директорию для текущего диапазона дат.
+     */
+    public void createTmpDirectory(LoadContextDto loadContextDto){
+        final Path dir = getTmpDirectoryPath(loadContextDto);
+        try {
+            Files.createDirectories(dir);
+        }
+        catch (IOException e){
+            throw new RuntimeException(e);
+        }
     }
 
+    /**
+     * Возвращает путь к директории текущей выгрузки.
+     */
+    private Path getTmpDirectoryPath(LoadContextDto loadContextDto) {
+        return Paths.get(ArchiveConfig.ARCHIVE_FOLDER, loadContextDto.getFrom() + "_" + loadContextDto.getTo());
+    }
+
+    /**
+     * Удаляет содержимое временной директории и её саму.
+     */
     public void deleteTmpDirectory(LoadContextDto loadContextDto) {
 
         final Path dir = getTmpDirectoryPath(loadContextDto);
