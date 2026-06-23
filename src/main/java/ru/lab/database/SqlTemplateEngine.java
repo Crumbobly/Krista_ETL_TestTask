@@ -1,7 +1,5 @@
 package ru.lab.database;
 
-import ru.lab.utils.FileUtils;
-
 import java.util.Map;
 
 public class SqlTemplateEngine {

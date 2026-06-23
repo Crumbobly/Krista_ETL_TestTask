@@ -28,7 +28,7 @@ public class ArchiveService {
 
     public void saveJson(int page, LoadContextDto loadContextDto, String responseRaw) {
 
-        final Path dir = getDirectory(loadContextDto);
+        final Path dir = getTmpDirectoryPath(loadContextDto);
 
         try {
             Files.createDirectories(dir);
@@ -42,21 +42,20 @@ public class ArchiveService {
 
     public void saveXml(int page, LoadContextDto loadContextDto, List<EBudgetResponseDto> responseDtoLst) {
 
-        final Path dir = getDirectory(loadContextDto);
+        final Path dir = getTmpDirectoryPath(loadContextDto);
 
         try {
             Files.createDirectories(dir);
-            final XmlDto xml = new XmlDto();
             final XmlDto.Meta meta = new XmlDto.Meta();
             meta.page = page;
             meta.from = loadContextDto.getFrom().toString();
             meta.to = loadContextDto.getTo().toString();
 
+            final XmlDto xml = new XmlDto();
             xml.meta = meta;
             xml.data = responseDtoLst;
 
             final Path file = dir.resolve("page_" + page + ".xml");
-
             xmlMapper.writeValue(file.toFile(), xml);
 
         } catch (IOException e) {
@@ -67,7 +66,7 @@ public class ArchiveService {
 
     public void zip(LoadContextDto loadContextDto, boolean deleteTmpFolder) {
 
-        final Path dir = getDirectory(loadContextDto);
+        final Path dir = getTmpDirectoryPath(loadContextDto);
         final Path zipFile = Paths.get(dir + ".zip");
 
         if(Files.exists(zipFile)) {
@@ -78,19 +77,13 @@ public class ArchiveService {
             }
         }
 
-
         try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(zipFile))) {
 
             try (Stream<Path> files = Files.list(dir)) {
 
                 files.forEach(file -> {
                     try {
-                        zos.putNextEntry(
-                                new ZipEntry(
-                                        file.getFileName().toString()
-                                )
-                        );
-
+                        zos.putNextEntry(new ZipEntry(file.getFileName().toString()));
                         Files.copy(file, zos);
                         zos.closeEntry();
 
@@ -98,7 +91,6 @@ public class ArchiveService {
                         throw new RuntimeException(e);
                     }
                 });
-
             }
 
             LOGGER.info("Архив {} создан", zipFile);
@@ -115,13 +107,13 @@ public class ArchiveService {
         }
     }
 
-    private Path getDirectory(LoadContextDto loadContextDto) {
+    private Path getTmpDirectoryPath(LoadContextDto loadContextDto) {
         return Paths.get(ARCHIEVE_FOLDER , loadContextDto.getFrom() + "_" + loadContextDto.getTo());
     }
 
     public void deleteTmpDirectory(LoadContextDto loadContextDto) {
 
-        final Path dir = getDirectory(loadContextDto);
+        final Path dir = getTmpDirectoryPath(loadContextDto);
         if (!dir.toFile().exists()) {
             return;
         }

@@ -35,6 +35,9 @@ public final class ObjectMapperFactory {
         module.addDeserializer(LocalDate.class, new LocalDateDeserializer(dateTimeFormatter));
         module.addDeserializer(Boolean.class, new BooleanDeserializer());
 
+        // WRITE_DATES_AS_TIMESTAMPS - чтобы даты писались как даты, а не как timestamp
+        // FAIL_ON_UNKNOWN_PROPERTIES - игнорируем неизвестные атрибуты
+        // ACCEPT_CASE_INSENSITIVE_PROPERTIES - не важно какой регистр
         return JsonMapper.builder()
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -44,6 +47,7 @@ public final class ObjectMapperFactory {
     }
 
 
+    // Кастомный десериализатор, т.к. в качестве Boolean может прийти и (0 или 1).
     private static class BooleanDeserializer extends JsonDeserializer<Boolean> {
 
         @Override

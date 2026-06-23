@@ -17,6 +17,9 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Класс для отправки запросов к api - budget.gov.ru
+ */
 public class EBudgetApiService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EBudgetApiService.class.getName());
@@ -30,7 +33,6 @@ public class EBudgetApiService {
         this.httpClient = HttpClients.createDefault();
     }
 
-
     // Если pageSize слишком большой - большая нагрузка на ОЗУ
     // pageSize = 10000 -> на странице 10000 объектов -> 100 Мб +
     public String getPage(LoadContextDto loadContextDto, int pageNumber) {
@@ -39,7 +41,6 @@ public class EBudgetApiService {
             final URI uri = buildUri(loadContextDto.getFrom(), loadContextDto.getTo(), pageNumber, loadContextDto.getPageSize());
             LOGGER.info("Запрос {}", uri);
             final HttpGet request = new HttpGet(uri);
-
 
             try (CloseableHttpResponse response = httpClient.execute(request)) {
 

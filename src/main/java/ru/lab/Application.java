@@ -24,8 +24,8 @@ public class Application {
             pageSize = Integer.parseInt(args[2]);
         }
         else{
-            from = LocalDate.of(2025, 11, 12);
-            to = LocalDate.of(2025, 11, 19);
+            from = LocalDate.of(2024, 1, 1);
+            to = LocalDate.of(2024, 12, 31);
             pageSize = 1000;
             LOGGER.info("Аргументы не были переданы, взяты значения по умолчанию.");
         }

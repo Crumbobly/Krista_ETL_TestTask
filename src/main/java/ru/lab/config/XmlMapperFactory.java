@@ -30,6 +30,7 @@ public class XmlMapperFactory {
         module.addDeserializer(LocalDate.class, new LocalDateDeserializer(dateTimeFormatter));
 
         final XmlMapper mapper = new XmlMapper();
+        // WRITE_DATES_AS_TIMESTAMPS - чтобы даты писались как даты, а не как timestamp
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         mapper.registerModule(module);
 

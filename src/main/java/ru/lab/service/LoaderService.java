@@ -14,14 +14,17 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Основной класс приложения.
+ * Вся логика тут.
+ */
 public class LoaderService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(LoaderService.class);
 
+    private final ObjectMapper mapper = ObjectMapperFactory.getMapper();
     private final PostgresWorker postgresWorker = new PostgresWorker();
     private final ClickhouseWorker clickhouseWorker = new ClickhouseWorker();
-
-    private final ObjectMapper mapper = ObjectMapperFactory.getMapper();
     private final EBudgetApiService apiService = new EBudgetApiService();
     private final ArchiveService archiveService = new ArchiveService();
 
@@ -31,9 +34,9 @@ public class LoaderService {
         // В идеале оно должно где-то храниться (типа последнее время синхронизации), но в качестве примера сделаем так.
         final LocalDateTime now = LocalDateTime.now();
 
-        archiveService.deleteTmpDirectory(loadContextDto);
-        postgresWorker.initialize();
-        clickhouseWorker.initialize();
+        archiveService.deleteTmpDirectory(loadContextDto); // Предварительно очищаем папку, куда будет сохранять ответы.
+        postgresWorker.initialize(); // Создаём табличку, если её нет
+        clickhouseWorker.initialize(); // Создаём табличку, если её нет
 
         int page = 1;
         while (true){
@@ -46,7 +49,6 @@ public class LoaderService {
 
                 archiveService.saveJson(page, loadContextDto, responseRaw);
                 archiveService.saveXml(page, loadContextDto, eBudgetResponseDtoList);
-
                 postgresWorker.insertBatch(eBudgetResponseDtoList, loadContextDto.getFrom(), loadContextDto.getTo());
 
                 LOGGER.info("Запрос выполнен, страница {}/{}. Добавлено {} элементов",
@@ -60,12 +62,12 @@ public class LoaderService {
                 }
 
             } catch (IOException e) {
-                System.out.println(e.getMessage());
+                throw new RuntimeException(e);
             }
         }
 
-        archiveService.zip(loadContextDto, false);
-        clickhouseWorker.sync(now);
+        archiveService.zip(loadContextDto, false); // Архивируем папку с ответами
+        clickhouseWorker.sync(now); // Запускаем синхронизацию с ClickHouse
     }
 
 }

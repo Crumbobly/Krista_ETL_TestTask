@@ -141,7 +141,6 @@ public class FlattenerServiceTest {
         expected.put("iterable", "field1#field2#field3");
 
         final Map<String, Object> actual = service.flat(o);
-        System.out.println(actual);
         assertEquals(expected, actual);
     }
 
