@@ -6,16 +6,33 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Сервис преобразования вложенных DTO в плоскую структуру вида
+ * "поле -> значение".
+ *
+ * <p>
+ * Объекты, реализующие {@link Flattenable}, рекурсивно разворачиваются.
+ * Коллекции простых значений объединяются в строку через DELIMITER.
+ * </p>
+ */
 public class FlattenerService {
 
     public final static String DELIMITER = "#";
 
+    /**
+     * Выполняет преобразование объекта в плоскую структуру.
+     *
+     * @param object исходный объект
+     * @return map вида "поле -> значение"
+     */
     public Map<String, Object> flat(Object object) {
 
         final Map<String, Object> result = new LinkedHashMap<>();
         final Map<String, List<Object>> tmp = new LinkedHashMap<>();
+        // Map<String, List<Object>>
         flat(object, "", tmp);
 
+        // Разворачиваем List<Object> в Object (либо строку если список длиннее 1 элемента)
         for (Map.Entry<String, List<Object>> entry : tmp.entrySet()) {
             final String key = entry.getKey();
             final List<Object> value = entry.getValue();
@@ -33,9 +50,17 @@ public class FlattenerService {
             }
         }
 
+        // Map<String, Object>
         return result;
     }
 
+    /**
+     * Получает значение поля через reflection.
+     *
+     * @param field поле
+     * @param object объект
+     * @return значение поля
+     */
     private Object getFieldValue(Field field, Object object) {
         field.setAccessible(true);
         try {
@@ -45,6 +70,19 @@ public class FlattenerService {
         }
     }
 
+    /**
+     * Рекурсивно обходит объект и разворачивает его структуру.
+     *
+     * <p>
+     * Объекты Flattenable раскрываются рекурсивно.
+     * Коллекции Flattenable также раскрываются.
+     * Простые коллекции накапливаются в список.
+     * </p>
+     *
+     * @param object объект
+     * @param prefix префикс имени поля
+     * @param map промежуточная структура
+     */
     private void flat(Object object, String prefix, Map<String, List<Object>> map) {
 
         if (object == null) return;
