@@ -1,6 +1,0 @@
-
-db:
-  url: ${POSTGRES_DB}
-  user: ${POSTGRES_USER}
-  password: ${POSTGRES_PASSWORD}
-
