@@ -44,6 +44,7 @@ public class LoaderService {
         while (true){
             LOGGER.info("Выполнение запроса, страница {}", page);
             final String responseRaw = apiService.getPage(loadContextDto, page);
+            LOGGER.info("Ответ получен, обработка данных");
 
             try {
                 final ResponseDto responseDto = mapper.readValue(responseRaw, ResponseDto.class);
