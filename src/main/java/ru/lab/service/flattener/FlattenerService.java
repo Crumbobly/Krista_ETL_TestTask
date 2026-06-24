@@ -44,7 +44,7 @@ public class FlattenerService {
             } else {
                 final StringBuilder sb = new StringBuilder();
                 for (Object o : value) {
-                    sb.append(o.toString()).append(DELIMITER);
+                    sb.append(o != null ? o.toString() : "").append(DELIMITER);
                 }
                 result.put(key, sb.substring(0, sb.length() - 1));
             }
@@ -71,7 +71,7 @@ public class FlattenerService {
     }
 
     /**
-     * Рекурсивно обходит объект и разворачивает его структуру.
+     * Рекурсивно обходит объект и разворачивает его структуру через reflection.
      *
      * <p>
      * Объекты Flattenable раскрываются рекурсивно.
@@ -96,7 +96,7 @@ public class FlattenerService {
             final String fieldName = field.getName();
             final Object fieldValue = getFieldValue(field, object);
 
-            if (fieldValue == null) {
+            if (field.getType() == Iterable.class && fieldValue == null) {
                 continue;
             }
 

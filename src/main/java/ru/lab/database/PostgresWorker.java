@@ -69,11 +69,14 @@ public class PostgresWorker extends DatabaseWorker {
     private Map<String, Object> prepareRow(EBudgetResponseDto dto, LocalDate from, LocalDate to, List<String> columns) {
 
         final Map<String, Object> row = flattenerService.flat(dto);
-        final Map<String, Object> casedRow = row.entrySet()
-                .stream()
-                .collect(Collectors.toMap(
-                        e -> NamingStrategyImpls.SNAKE_CASE.translate(e.getKey()),
-                        Map.Entry::getValue));
+        final Map<String, Object> casedRow = new LinkedHashMap<>();
+
+        for (Map.Entry<String, Object> e : row.entrySet()) {
+            casedRow.put(
+                    NamingStrategyImpls.SNAKE_CASE.translate(e.getKey()),
+                    e.getValue()
+            );
+        }
 
         final Map<String, Object> values = new LinkedHashMap<>();
 

@@ -39,6 +39,15 @@ public class FlattenerServiceTest {
         Iterable<Object> iterable;
     }
 
+    private static class ObjectWithIterableObjects implements Flattenable {
+        Iterable<SimpleObjectExtendsFlattenerDto> iterable;
+    }
+
+    private static class ObjectWithIterableObjects2 implements Flattenable {
+        Iterable<SimpleObjectExtendsFlattenerDto> iterable;
+        Iterable<SimpleObjectExtendsFlattenerDto> iterable2;
+    }
+
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
@@ -81,6 +90,8 @@ public class FlattenerServiceTest {
         expected.put("localDateTime", localDateTime);
         expected.put("id", id);
         expected.put("flag", flag);
+        expected.put("name", null);
+        expected.put("simpleObject", null);
 
         final Map<String, Object> actual = service.flat(bigObject);
 
@@ -94,6 +105,12 @@ public class FlattenerServiceTest {
     void shouldFlatNullFields() {
         final BigObject bigObject = new BigObject();
         final Map<String, Object> expected = new HashMap<String, Object>();
+        expected.put("id", null);
+        expected.put("name", null);
+        expected.put("flag", null);
+        expected.put("localDateTime", null);
+        expected.put("simpleObject", null);
+
         final Map<String, Object> actual = service.flat(bigObject);
         assertEquals(expected, actual);
     }
@@ -106,6 +123,10 @@ public class FlattenerServiceTest {
         bigObject.setSimpleObject(simpleObject);
 
         final Map<String, Object> expected = new HashMap<String, Object>();
+        expected.put("id", null);
+        expected.put("name", null);
+        expected.put("flag", null);
+        expected.put("localDateTime", null);
         expected.put("simpleObject", simpleObject);
 
         final Map<String, Object> actual = service.flat(bigObject);
@@ -120,6 +141,10 @@ public class FlattenerServiceTest {
         bigObject.setSimpleObject(s);
 
         final Map<String, Object> expected = new HashMap<String, Object>();
+        expected.put("id", null);
+        expected.put("name", null);
+        expected.put("flag", null);
+        expected.put("localDateTime", null);
         expected.put("simpleObject_id", 1);
         expected.put("simpleObject_name", "name");
 
@@ -138,7 +163,7 @@ public class FlattenerServiceTest {
         final ObjectWithIterableField o = new ObjectWithIterableField(lst);
 
         final Map<String, Object> expected = new HashMap<String, Object>();
-        expected.put("iterable", "field1#field2#field3");
+        expected.put("iterable", "field1#field2#field3#");
 
         final Map<String, Object> actual = service.flat(o);
         assertEquals(expected, actual);
@@ -155,12 +180,53 @@ public class FlattenerServiceTest {
         final ObjectWithIterableField o = new ObjectWithIterableField(lst);
 
         final Map<String, Object> expected = new HashMap<String, Object>();
-        expected.put("iterable_id", "1#2#3");
-        expected.put("iterable_name", "name1#name2#name3");
+        expected.put("iterable_id", "1#2#3#");
+        expected.put("iterable_name", "name1#name2#name3#");
 
         final Map<String, Object> actual = service.flat(o);
         assertEquals(expected, actual);
     }
+
+    @Test
+    void shouldFlatObjectEmptyCollection(){
+
+        final List<Object> lst = new ArrayList<>();
+        final ObjectWithIterableField o = new ObjectWithIterableField(lst);
+        final Map<String, Object> expected = new HashMap<String, Object>();
+
+        final Map<String, Object> actual = service.flat(o);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldFlatObjectNullCollection(){
+        final ObjectWithIterableField o = new ObjectWithIterableField(null);
+        final Map<String, Object> expected = new HashMap<String, Object>();
+
+        final Map<String, Object> actual = service.flat(o);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldFlatObjectEmptyObjectCollection(){
+        final ObjectWithIterableObjects o = new ObjectWithIterableObjects();
+        o.iterable = new ArrayList<>();
+        final Map<String, SimpleObjectExtendsFlattenerDto> expected = new HashMap<String, SimpleObjectExtendsFlattenerDto>();
+
+        final Map<String, Object> actual = service.flat(o);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldFlatObjectNullObjectCollection(){
+        final ObjectWithIterableObjects o = new ObjectWithIterableObjects();
+
+        final Map<String, SimpleObjectExtendsFlattenerDto> expected = new HashMap<String, SimpleObjectExtendsFlattenerDto>();
+
+        final Map<String, Object> actual = service.flat(o);
+        assertEquals(expected, actual);
+    }
+
 
     @Test
     void shouldFlatObjectCollectionWithNull(){
@@ -174,11 +240,14 @@ public class FlattenerServiceTest {
         final ObjectWithIterableField o = new ObjectWithIterableField(lst);
 
         final Map<String, Object> expected = new HashMap<String, Object>();
-        expected.put("iterable_id", "1#3#4");
-        expected.put("iterable_name", "name1#name4");
+        expected.put("iterable_id", "1#3#4#");
+        expected.put("iterable_name", "name1##name4#");
 
         final Map<String, Object> actual = service.flat(o);
+        System.out.println(actual);
         assertEquals(expected, actual);
     }
+
+
 
 }

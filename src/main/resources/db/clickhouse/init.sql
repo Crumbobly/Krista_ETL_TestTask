@@ -2,9 +2,9 @@
 CREATE TABLE IF NOT EXISTS e_budget
 (
     last_update_from
-        Nullable(Date32),
+        Nullable(String),
     last_update_to
-        Nullable(Date32),
+        Nullable(String),
 
     info_reg_num
         Nullable(String),
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS e_budget
         Nullable(String),
 
     info_reg_date
-        Nullable(DateTime),
+        Nullable(String),
 
     info_okopf_name
         Nullable(String),
@@ -211,9 +211,9 @@ CREATE TABLE IF NOT EXISTS e_budget
     info_guid
         String,
     info_start_date
-        Nullable(DateTime64),
+        Nullable(String),
     info_end_date
-        Nullable(DateTime64),
+        Nullable(String),
     info_status
         Nullable(String),
     info_record_num
@@ -225,14 +225,14 @@ CREATE TABLE IF NOT EXISTS e_budget
     info_first_reg_guid
         Nullable(String),
     info_first_reg_date
-        Nullable(DateTime64),
+        Nullable(String),
 
     info_last_reg_num
         Nullable(String),
     info_last_reg_guid
         Nullable(String),
     info_last_reg_date
-        Nullable(DateTime64),
+        Nullable(String),
 
     info_update_reason
         Nullable(String),
@@ -241,9 +241,9 @@ CREATE TABLE IF NOT EXISTS e_budget
     info_acc_mgmt
         Nullable(String),
     info_inclusion_date
-        Nullable(DateTime64),
+        Nullable(String),
     info_exclusion_date
-        Nullable(DateTime64),
+        Nullable(String),
 
     info_pubp_code
         Nullable(String),
@@ -263,21 +263,21 @@ CREATE TABLE IF NOT EXISTS e_budget
     info_reformation_document_num
         Nullable(String),
     info_reformation_document_date
-        Nullable(Date32),
+        Nullable(String),
     info_reformation_name
         Nullable(String),
     info_reformation_code
         Nullable(String),
     info_reformation_start_date
-        Nullable(Date32),
+        Nullable(String),
     info_reformation_end_date
-        Nullable(Date32),
+        Nullable(String),
     info_contour_type_code
         Nullable(String),
     info_load_date
-        Nullable(Date32),
+        Nullable(String),
     info_date_update
-        Nullable(Date32),
+        Nullable(String),
     info_egrul_not_included
         Nullable(String),
     info_ppotypecode
@@ -548,6 +548,6 @@ CREATE TABLE IF NOT EXISTS e_budget
         Nullable(String),
 
     updated_at
-        DateTime64
+        String
 )
     ENGINE = ReplacingMergeTree(updated_at) ORDER BY (info_guid);
